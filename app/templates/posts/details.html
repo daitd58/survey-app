@@ -1,0 +1,195 @@
+<div class="post-wrapper">
+    <div class="post-content">
+        <div class="left">
+            <div class="vote">
+                <div class="up" ng-click="postCtrl.votePost(1)"><i class="fa fa-caret-up" aria-hidden="true"></i></div>
+                <div class="count">{{postCtrl.post.vote_count}}</div>
+                <div class="down" ng-click="postCtrl.votePost(-1)"><i class="fa fa-caret-down"
+                                                                      aria-hidden="true"></i></i>
+                </div>
+            </div>
+        </div>
+        <div class="right">
+            <h1 class="title ng-fade">{{postCtrl.post.title}}</h1>
+            <div class="group">
+                <div class="author" ng-if="!postCtrl.post.is_incognito">
+                    <img ng-src="{{postCtrl.post.author.avatar}}" alt="">
+                    <div class="author_name">
+                        <div>{{postCtrl.post.author.capability == 'student' ? 'Sinh viên' : 'Giảng viên'}}:</div>
+                        <span>{{postCtrl.post.author.name}}</span>
+                    </div>
+                </div>
+                <div class="author" ng-if="postCtrl.post.is_incognito">
+                    <img ng-src="{{'assets/images/incognito.png'}}" alt="">
+                    <div class="author_name">
+                        <div>Người đăng</div>
+                        <span>Ẩn danh</span>
+                    </div>
+                </div>
+                <div class="number_comments">
+                    <div>Trả lời:</div>
+                    <span class="number ng-binding">{{postCtrl.post.comments.length}}</span>
+                </div>
+                <div class="time">
+                    <div>Thời gian:</div>
+                    <span class="number" am-time-ago="postCtrl.post.created_at"
+                          title="{{postCtrl.post.created_at | amDateFormat:'HH:mm - MM/DD/YYYY'}}"></span>
+                </div>
+
+                <div class="action pull-right" ng-show="postCtrl.data.user.id == postCtrl.post.author.id">
+                    <div class="btn-group">
+                        <a class="btn btn-primary" ui-sref="posts.list.edit({postId: postCtrl.post.id})"><i class="fa fa-pencil fa-fw"></i> Sửa</a>
+                        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                            <span class="fa fa-caret-down" title="Toggle dropdown menu"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a ng-click="postCtrl.remove()"><i class="fa fa-trash-o fa-fw"></i> Xóa</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="content ng-fade" ng-bind-html="postCtrl.post.content">
+            </div>
+
+            <div class="exercise" ng-if="postCtrl.post.type == 'event' && postCtrl.post.id">
+                <h3>Hạn nộp: {{postCtrl.post.time_end_event}}</h3>
+                <h3>Còn lại: {{postCtrl.post.time_remaining_event}}</h3>
+
+                <div class="teacher" ng-if="postCtrl.data.user.capability == 'teacher'">
+                    <button class="btn btn-primary ed-button" data-toggle="modal" data-target="#modalManagerExercise" ng-click="postCtrl.getListExercise()" ng-disabled="!postCtrl.post.attach_file_count">Danh sách đã nộp ({{postCtrl.post.attach_file_count}})</button>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="modalManagerExercise" tabindex="-1" role="dialog" aria-labelledby="labelManagerExercise">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="labelManagerExercise">Danh sách nộp bài tập</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div ng-if="postCtrl.post.listExercise.length">
+                                        <table class="table table-hover table-striped">
+                                            <thead>
+                                            <tr>
+                                                <th>STT</th>
+                                                <th>Tên</th>
+                                                <th>MSV</th>
+                                                <th>Lớp</th>
+                                                <th>Bài tập</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr ng-repeat="item in postCtrl.post.listExercise">
+                                                <td>{{$index + 1}}</td>
+                                                <td>{{item.author.name}}</td>
+                                                <td>{{item.author.code}}</td>
+                                                <td>{{item.author.regular_class}}</td>
+                                                <td>
+                                                    <a ng-href="{{item.url}}" download="{{item.url}}">Tải về</a>
+                                                    <span>/</span>
+                                                    <a ng-href="{{item.url}}" target="_blank">Xem</a>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div ng-if="!postCtrl.post.listExercise.length">Danh sách rỗng</div>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary ed-button" ng-click="postCtrl.downloadAllExercise()" ng-disabled="!postCtrl.post.listExercise.length">Tải về tất cả lớp</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="student" ng-if="postCtrl.data.user.capability != 'teacher'">
+                    <p ng-if="postCtrl.post.is_send_file">Bạn đã nộp bài tập.</p>
+                    <button class="btn btn-primary ed-button" data-toggle="modal" data-target="#modalExercise" ng-if="!postCtrl.post.is_send_file" ng-disabled="postCtrl.disableUploadExercise">Nộp bài tập</button>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="modalExercise" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="myModalLabel">Nộp bài tập</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="upload-component">
+                                        <button class="btn btn-primary" type="file" ngf-select="postCtrl.selectFile($file, $invalidFiles)">
+                                            Select File
+                                        </button>
+                                        <span class="filename">{{f.name}}</span>
+
+                                        <div class="upload-actions"> {{errFile.name}} {{errFile.$error}} {{errFile.$errorParam}}
+                                            <div class="upload-progress" ng-show="f.progress >= 0">
+                                                <div style="width:{{f.progress}}%" ng-bind="f.progress + '%'"></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="upload-results" ng-show="link_download">
+                                            Link download: <a ng-href="{{link_download}}" download="{{link_download}}" target="_blank">{{f.name}}</a>
+                                        </div>
+                                    </div>
+
+                                    <p>Chọn file và chọn Tải lên hoặc chọn &times; để thoát.</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary ed-button" ng-click="postCtrl.uploadExercise()" ng-disabled="postCtrl.disableUpload || postCtrl.post.is_send_file">Tải lên</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="comments" id="comments">
+        <div class="comment ng-fade" ng-repeat="comment in postCtrl.post.comments">
+            <div class="left">
+                <div class="vote">
+                    <div class="up" ng-click="postCtrl.voteComment(comment.id)">
+                        <i class="fa fa-caret-up" aria-hidden="true"></i>
+                    </div>
+                    <div class="count">{{comment.vote_count || 0}}</div>
+                    <div class="down" ng-click="postCtrl.devoteComment(comment.id)">
+                        <i class="fa fa-caret-down" aria-hidden="true"></i>
+                    </div>
+                </div>
+                <div class="solve-btn solved" ng-show="comment.is_solve"></div>
+                <div class="solve-btn can-solve unsolved" ng-show="postCtrl.byPostAuthor && !comment.is_solve" ng-click="postCtrl.solve(comment.id)"></div>
+            </div>
+
+            <div class="right">
+                <div class="header">
+                    <div class="media-left">
+                        <img ng-src="{{comment.author.avatar}}" alt=""/>
+                    </div>
+                    <div class="media-body">
+                        <span class="title">{{comment.author.name}}</span>
+                        <div class="time" am-time-ago="comment.created_at" title="{{comment.created_at | date }}"></div>
+                    </div>
+                </div>
+
+                <div class="content" ng-bind-html="comment.content">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-comment">
+        <h4>Trả lời</h4>
+        <form ng-submit="postCtrl.comment()">
+            <div class="form-group">
+                <textarea ng-model="postCtrl.answer" ui-tinymce="postCtrl.tinymceOptions"></textarea>
+            </div>
+            <div class="form-group">
+                <button class="comment_submit" type="submit">Trả lời</button>
+            </div>
+        </form>
+    </div>
+</div>
