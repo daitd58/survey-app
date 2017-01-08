@@ -33,7 +33,7 @@
 
         function makeRequestAuth(config) {
             var token = StorageService.getToken();
-            config.headers = {'Authorization': token};
+            config.headers = {'Authorization': 'Bearer ' + token};
 
             return makeRequest(config);
         }

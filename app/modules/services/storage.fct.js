@@ -16,11 +16,11 @@
         //////////
 
         function getToken() {
-            return localStorageService.get('user_token');
+            return localStorageService.get('token');
         }
 
         function setToken(token) {
-            return localStorageService.set('user_token', token);
+            return localStorageService.set('token', token);
         }
 
         function setUserData(user) {

@@ -47,7 +47,7 @@
                 timeout: 3000,
                 closeWith: ['click'],
                 killer: true,
-                theme: 'edoo'
+                theme: 'surveyS'
             });
         }
     }

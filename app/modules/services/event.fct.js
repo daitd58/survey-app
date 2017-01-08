@@ -16,10 +16,17 @@
 
             return $state.go('login');
         });
+
+        $rootScope.$on('requestError', function (event, args) {
+            StorageService.clearAll();
+            updateValues();
+
+            return $state.go('login');
+        });
         
         $rootScope.$on('loginSuccess', function (event, args) {
-            StorageService.setUserData(args.data.user);
-            StorageService.setToken(args.data.token);
+            StorageService.setUserData(args.data);
+            StorageService.setToken(args.token);
 
             updateValues();
         });
@@ -36,6 +43,7 @@
             PageValues.isAuthenticated = AuthService.isAuthorized();
             PageValues.token = token;
             PageValues.user = StorageService.getUserData();
+            console.log(PageValues);
         }
 
         updateValues();

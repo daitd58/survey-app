@@ -22,6 +22,24 @@
                 controller: 'LoginController',
                 controllerAs: 'loginCtrl'
             })
+            .state('logout', {
+                url: '/logout',
+                templateUrl: 'templates/accounts/logout.html',
+                controller: 'LogoutController',
+                controllerAs: 'logoutCtrl'
+            })
+            .state('templates', {
+                url: '/templates',
+                templateUrl: '/templates/admin/templates.html',
+                controller: 'TemplateController',
+                controllerAs: 'templateCtrl'
+            })
+            .state('users', {
+                url: '/users',
+                templateUrl: '/templates/admin/users.html',
+                controller: 'UserController',
+                controllerAs: 'userCtrl'
+            })
             .state('posts', {
                 url: '/class',
                 views: {

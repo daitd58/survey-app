@@ -2,7 +2,7 @@
     'use strict';
 
     angular.module('app.core')
-        .controller('LoginController', function ($http, $rootScope, $location, $state, localStorageService, PageValues, AccountService, NotificationService) {
+        .controller('LoginController', function ($http, $rootScope, $location, $state, StorageService, PageValues, AccountService, NotificationService) {
             var mv = this;
 
             PageValues.title = 'Đăng nhập';
@@ -13,7 +13,7 @@
 
             mv.disableSubmit = false;
 
-            var token = localStorageService.get('user_token');
+            var token = StorageService.getToken();
 
             if (token) {
                 return $state.go('welcome');
@@ -26,8 +26,10 @@
                     function (response) {
                         mv.disableSubmit = false;
                         $rootScope.$emit('loginSuccess', response);
-                        // $state.go('class');
-                        console.log(response);
+                        if( response.data.user_type == 1 )
+                            $state.go('users');
+                        // if( response.data.user_type == 2 )
+                        //     $state.go('')
                         NotificationService.success('Xin chào ' + response.data.name + '!');
                     },
                     function (error) {
