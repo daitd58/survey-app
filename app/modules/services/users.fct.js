@@ -6,14 +6,18 @@
 
     function UserService($q, APIService) {
         return {
-            getUsers: getUsers
+            getUsers: getUsers,
+            createUser: createUser,
+            updateUser: updateUser,
+            deleteUser: deleteUser,
+            getUser: getUser
         };
 
         function getUsers() {
             var deferred = $q.defer();
 
             APIService.makeRequestAuth({
-                url: '/users',
+                url: '/user/list',
                 method: 'GET'
             }).then(
                 function (response) {
@@ -25,6 +29,22 @@
             );
 
             return deferred.promise;
+        }
+        
+        function createUser() {
+            
+        }
+        
+        function updateUser() {
+            
+        }
+        
+        function deleteUser() {
+            
+        }
+        
+        function getUser() {
+            
         }
     }
 })();
